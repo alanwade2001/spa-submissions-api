@@ -21,15 +21,23 @@ func NewSubmissionService(repositoryAPI RepositoryAPI, pain001API Pain001API, va
 
 // CreateSubmission f
 func (s SubmissionService) CreateSubmission(rc io.ReadCloser) (*Submission, error) {
+	var pain001 *Pain001
+	var result *Result
+
 	if data, err := io.ReadAll(rc); err != nil {
 		return nil, err
-	} else if pain001, err := s.pain001API.Parse(data); err != nil {
+	} else if pain001, err = s.pain001API.Parse(data); err != nil {
 		return nil, err
-	} else if _, err := s.validatorAPI.Validate(*pain001); err != nil {
+	} else if result, err = s.validatorAPI.Validate(*pain001); err != nil {
 		return nil, err
 	}
 
-	return nil, nil
+	submission := Submission{
+		Pain001:          *pain001,
+		ValidationResult: *result,
+	}
+
+	return &submission, nil
 }
 
 // GetSubmission f

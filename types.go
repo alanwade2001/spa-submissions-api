@@ -3,7 +3,6 @@ package main
 // Submission s
 type Submission struct {
 	ID               string `bson:"_id"`
-	Name             string
 	Pain001          Pain001
 	ValidationResult Result
 }

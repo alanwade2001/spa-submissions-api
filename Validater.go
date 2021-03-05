@@ -11,5 +11,7 @@ func NewValidator() ValidatorAPI {
 
 // Validate f
 func (v Validator) Validate(pain001 Pain001) (*Result, error) {
-	return nil, nil
+	result := Result{Success: true}
+	
+	return &result, nil
 }
