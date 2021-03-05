@@ -8,30 +8,24 @@ import (
 
 // SubmissionRouter s
 type SubmissionRouter struct {
-	repositoryAPI RepositoryAPI
+	serviceAPI SubmissionServiceAPI
 }
 
-
 // NewSubmissionRouter f
-func NewSubmissionRouter(repositoryAPI RepositoryAPI) SubmissionAPI {
+func NewSubmissionRouter(repositoryAPI RepositoryAPI, serviceAPI SubmissionServiceAPI) SubmissionAPI {
 
-	submissionAPI := SubmissionRouter{repositoryAPI}
+	submissionAPI := SubmissionRouter{serviceAPI}
 
 	return &submissionAPI
 }
 
 // CreateSubmission f
 func (cr *SubmissionRouter) CreateSubmission(ctx *gin.Context) {
-	submission := new(Submission)
 
-	if err := ctx.BindJSON(submission); err != nil {
-
-		ctx.IndentedJSON(http.StatusUnprocessableEntity, err)
-
-	} else if c1, err := cr.repositoryAPI.CreateSubmission(submission); err != nil {
+	if submission, err := cr.serviceAPI.CreateSubmission(ctx.Request.Body); err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	} else {
-		ctx.IndentedJSON(http.StatusCreated, c1)
+		ctx.IndentedJSON(http.StatusCreated, submission)
 	}
 
 }
@@ -39,7 +33,8 @@ func (cr *SubmissionRouter) CreateSubmission(ctx *gin.Context) {
 // GetSubmission f
 func (cr *SubmissionRouter) GetSubmission(ctx *gin.Context) {
 	submissionID := ctx.Param("id")
-	if submission, err := cr.repositoryAPI.GetSubmission(submissionID); err != nil {
+
+	if submission, err := cr.serviceAPI.GetSubmission(submissionID); err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	} else {
 		ctx.IndentedJSON(http.StatusOK, submission)
@@ -48,10 +43,9 @@ func (cr *SubmissionRouter) GetSubmission(ctx *gin.Context) {
 
 // GetSubmissions f
 func (cr *SubmissionRouter) GetSubmissions(ctx *gin.Context) {
-	if submissions, err := cr.repositoryAPI.GetSubmissions(); err != nil {
+	if submissions, err := cr.serviceAPI.GetSubmissions(); err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	} else {
 		ctx.IndentedJSON(http.StatusOK, submissions)
 	}
 }
-

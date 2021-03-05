@@ -2,10 +2,10 @@ package main
 
 // Submission s
 type Submission struct {
-	ID                string `bson:"_id"`
-	Name              string
-	InitiatingPartyID string
-	Roles             Roles
+	ID               string `bson:"_id"`
+	Name             string
+	Pain001          Pain001
+	ValidationResult Result
 }
 
 // Submissions a
@@ -24,4 +24,67 @@ type Roles struct {
 	Submitters Users
 	Approvers  Users
 	Admins     Users
+}
+
+// Failure s
+type Failure struct {
+	Error error
+	Level FailureLevel
+}
+
+// Failures a
+type Failures []Failure
+
+// FailureLevel i
+type FailureLevel int
+
+const (
+	// LevelCustomer c
+	LevelCustomer FailureLevel = iota
+	// LevelGroupHeader c
+	LevelGroupHeader FailureLevel = iota
+	// LevelPayment c
+	LevelPayment FailureLevel = iota
+	// LevelTransaction c
+	LevelTransaction FailureLevel = iota
+)
+
+// Result s
+type Result struct {
+	Success  bool
+	Failures Failures
+}
+
+// Pain001 s
+type Pain001 struct {
+	GroupHeader GroupHeader
+	PmtInfs     PmtInfs
+}
+
+// GroupHeader s
+type GroupHeader struct {
+	MsgID    string
+	CreDtTm  string
+	NbOfTxs  string
+	CtrlSum  string
+	InitgPty string
+}
+
+// PmtInf s
+type PmtInf struct {
+	PmtInfID    string
+	NbOfTxs     string
+	CtrlSum     string
+	ReqdExctnDt string
+	Dbtr        Account
+}
+
+// PmtInfs a
+type PmtInfs []PmtInf
+
+// Account s
+type Account struct {
+	Name string
+	IBAN string
+	BIC  string
 }

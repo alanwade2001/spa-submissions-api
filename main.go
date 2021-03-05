@@ -1,9 +1,13 @@
 package main
 
-import "k8s.io/klog/v2"
+import (
+	"os"
+
+	"k8s.io/klog/v2"
+)
 
 func main() {
-	klog.Infoln("starting spa-customer-api")
+	klog.Infof("starting %s", os.Args[0])
 
 	serverAPI := InitialiseServerAPI()
 

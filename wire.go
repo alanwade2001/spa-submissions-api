@@ -12,6 +12,13 @@ func InitialiseServerAPI() ServerAPI {
 	wire.Build(
 		gin.Default,
 		NewMongoService,
+		NewXMLParserAPI,
+		NewGroupHeaderMapper,
+		NewPaymentInformationMapper,
+		NewPain001Mapper,
+		NewValidator,
+		NewPain001Service,
+		NewSubmissionService,
 		NewSubmissionRouter,
 		NewRegisterService,
 		NewConfigService,
