@@ -32,6 +32,11 @@ type RepositoryAPI interface {
 	GetSubmissions() (*Submissions, error)
 }
 
+// MessageAPI i
+type MessageAPI interface {
+	SendInitiation(i Initiation) error
+}
+
 // ConfigAPI si
 type ConfigAPI interface {
 	Load() error

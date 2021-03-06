@@ -9,16 +9,16 @@ type ConfigService struct {
 // Load f
 func (cs ConfigService) Load() error {
 
-	//viper.AddConfigPath(".")
-	//viper.SetConfigName("app")
-	//viper.SetConfigType("env")
+	viper.AddConfigPath(".")
+	viper.SetConfigName("app")
+	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
 
-	//err := viper.ReadInConfig()
-	//if err != nil {
-	//	panic(err)
-	//}
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(err)
+	}
 
 	return nil
 }

@@ -12,6 +12,7 @@ func InitialiseServerAPI() ServerAPI {
 	wire.Build(
 		gin.Default,
 		NewMongoService,
+		NewMessageService,
 		NewXMLParserAPI,
 		NewGroupHeaderMapper,
 		NewPaymentInformationMapper,
@@ -34,6 +35,7 @@ func InitialiseMockedServerAPI() ServerAPI {
 	wire.Build(
 		gin.Default,
 		NewMongoService,
+		NewMessageService,
 		NewXMLParserAPI,
 		NewGroupHeaderMapper,
 		NewPaymentInformationMapper,

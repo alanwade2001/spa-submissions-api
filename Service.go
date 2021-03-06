@@ -8,15 +8,17 @@ type SubmissionService struct {
 	initiationAPI InitiationAPI
 	validatorAPI  ValidatorAPI
 	customerAPI   CustomerAPI
+	messageAPI    MessageAPI
 }
 
 // NewSubmissionService f
-func NewSubmissionService(repositoryAPI RepositoryAPI, initiationAPI InitiationAPI, validatorAPI ValidatorAPI, customerAPI CustomerAPI) SubmissionServiceAPI {
+func NewSubmissionService(repositoryAPI RepositoryAPI, initiationAPI InitiationAPI, validatorAPI ValidatorAPI, customerAPI CustomerAPI, messageAPI MessageAPI) SubmissionServiceAPI {
 	service := SubmissionService{
 		repositoryAPI: repositoryAPI,
 		initiationAPI: initiationAPI,
 		validatorAPI:  validatorAPI,
 		customerAPI:   customerAPI,
+		messageAPI:    messageAPI,
 	}
 	return service
 }
@@ -50,6 +52,8 @@ func (s SubmissionService) CreateSubmission(rc io.ReadCloser, user User) (submis
 	}
 
 	if submission, err = s.repositoryAPI.CreateSubmission(submission); err != nil {
+		return nil, err
+	} else if err = s.messageAPI.SendInitiation(*submission.Initiation); err != nil {
 		return nil, err
 	}
 
