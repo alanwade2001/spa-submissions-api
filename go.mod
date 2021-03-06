@@ -4,6 +4,7 @@ go 1.16
 
 require (
 	github.com/gin-gonic/gin v1.6.3
+	github.com/go-resty/resty/v2 v2.5.0
 	github.com/google/wire v0.5.0
 	github.com/lestrrat-go/libxml2 v0.0.0-20201123224832-e6d9de61b80d
 	github.com/spf13/viper v1.7.1
