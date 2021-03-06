@@ -5,15 +5,15 @@ import "io"
 // SubmissionService s
 type SubmissionService struct {
 	repositoryAPI RepositoryAPI
-	pain001API    Pain001API
+	initiationAPI    InitiationAPI
 	validatorAPI  ValidatorAPI
 }
 
 // NewSubmissionService f
-func NewSubmissionService(repositoryAPI RepositoryAPI, pain001API Pain001API, validatorAPI ValidatorAPI) SubmissionServiceAPI {
+func NewSubmissionService(repositoryAPI RepositoryAPI, initiationAPI InitiationAPI, validatorAPI ValidatorAPI) SubmissionServiceAPI {
 	service := SubmissionService{
 		repositoryAPI: repositoryAPI,
-		pain001API:    pain001API,
+		initiationAPI:    initiationAPI,
 		validatorAPI:  validatorAPI,
 	}
 	return service
@@ -21,19 +21,19 @@ func NewSubmissionService(repositoryAPI RepositoryAPI, pain001API Pain001API, va
 
 // CreateSubmission f
 func (s SubmissionService) CreateSubmission(rc io.ReadCloser) (*Submission, error) {
-	var pain001 *Pain001
+	var initiation *Initiation
 	var result *Result
 
 	if data, err := io.ReadAll(rc); err != nil {
 		return nil, err
-	} else if pain001, err = s.pain001API.Parse(data); err != nil {
+	} else if initiation, err = s.initiationAPI.Parse(data); err != nil {
 		return nil, err
-	} else if result, err = s.validatorAPI.Validate(*pain001); err != nil {
+	} else if result, err = s.validatorAPI.Validate(*initiation); err != nil {
 		return nil, err
 	}
 
 	submission := Submission{
-		Pain001:          *pain001,
+		Initiation:          *initiation,
 		ValidationResult: *result,
 	}
 

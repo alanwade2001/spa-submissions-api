@@ -7,22 +7,22 @@ import (
 	"github.com/lestrrat-go/libxml2/xpath"
 )
 
-// Pain001Mapper s
-type Pain001Mapper struct {
+// InitiationMapper s
+type InitiationMapper struct {
 	groupHeaderMapperAPI        GroupHeaderMapperAPI
 	paymentInformationMapperAPI PaymentInformationMapperAPI
 }
 
-// NewPain001Mapper f
-func NewPain001Mapper(groupHeaderMapperAPI GroupHeaderMapperAPI, paymentInformationMapperAPI PaymentInformationMapperAPI) Pain001MapperAPI {
-	return Pain001Mapper{
+// NewInitiationMapper f
+func NewInitiationMapper(groupHeaderMapperAPI GroupHeaderMapperAPI, paymentInformationMapperAPI PaymentInformationMapperAPI) InitiationMapperAPI {
+	return InitiationMapper{
 		groupHeaderMapperAPI:        groupHeaderMapperAPI,
 		paymentInformationMapperAPI: paymentInformationMapperAPI,
 	}
 }
 
 // Map f
-func (m Pain001Mapper) Map(doc types.Document) (*Pain001, error) {
+func (m InitiationMapper) Map(doc types.Document) (*Initiation, error) {
 	//var root types.Node
 	//var ctx *xpath.Context
 	var grpHdr *GroupHeader
@@ -40,12 +40,12 @@ func (m Pain001Mapper) Map(doc types.Document) (*Pain001, error) {
 		return nil, err
 	}
 
-	pain001 := Pain001{
+	initiation := Initiation{
 		GroupHeader: *grpHdr,
 		PmtInfs:     pmtInfs,
 	}
 
-	return &pain001, nil
+	return &initiation, nil
 }
 
 // GroupHeaderMapper s

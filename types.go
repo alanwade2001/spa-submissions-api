@@ -3,7 +3,7 @@ package main
 // Submission s
 type Submission struct {
 	ID               string `bson:"_id"`
-	Pain001          Pain001
+	Initiation       Initiation
 	ValidationResult Result
 }
 
@@ -54,8 +54,8 @@ type Result struct {
 	Failures Failures
 }
 
-// Pain001 s
-type Pain001 struct {
+// Initiation s
+type Initiation struct {
 	GroupHeader GroupHeader
 	PmtInfs     PmtInfs
 }

@@ -44,12 +44,12 @@ type XMLParserAPI interface {
 
 // ValidatorAPI i
 type ValidatorAPI interface {
-	Validate(pain001 Pain001) (*Result, error)
+	Validate(initiation Initiation) (*Result, error)
 }
 
-// Pain001MapperAPI i
-type Pain001MapperAPI interface {
-	Map(types.Document) (*Pain001, error)
+// InitiationMapperAPI i
+type InitiationMapperAPI interface {
+	Map(types.Document) (*Initiation, error)
 }
 
 // GroupHeaderMapperAPI i
@@ -69,7 +69,7 @@ type SubmissionServiceAPI interface {
 	GetSubmissions() (*Submissions, error)
 }
 
-// Pain001API i
-type Pain001API interface {
-	Parse(data []byte) (*Pain001, error)
+// InitiationAPI i
+type InitiationAPI interface {
+	Parse(data []byte) (*Initiation, error)
 }

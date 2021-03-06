@@ -10,7 +10,7 @@ func NewValidator() ValidatorAPI {
 }
 
 // Validate f
-func (v Validator) Validate(pain001 Pain001) (*Result, error) {
+func (v Validator) Validate(initiation Initiation) (*Result, error) {
 	result := Result{Success: true}
 	
 	return &result, nil
