@@ -3,8 +3,10 @@ package main
 // Submission s
 type Submission struct {
 	ID               string `bson:"_id"`
-	Initiation       Initiation
+	Initiation       *Initiation
 	ValidationResult Result
+	Customer         *Customer
+	Submitter        User
 }
 
 // Submissions a
@@ -23,6 +25,13 @@ type Roles struct {
 	Submitters Users
 	Approvers  Users
 	Admins     Users
+}
+
+// Customer s
+type Customer struct {
+	ID                string
+	Name              string
+	InitiatingPartyID string
 }
 
 // Failure s
@@ -58,6 +67,7 @@ type Result struct {
 type Initiation struct {
 	GroupHeader GroupHeader
 	PmtInfs     PmtInfs
+	Customer    *Customer
 }
 
 // GroupHeader s

@@ -8,13 +8,14 @@ import (
 
 // SubmissionRouter s
 type SubmissionRouter struct {
+	userAPI    UserAPI
 	serviceAPI SubmissionServiceAPI
 }
 
 // NewSubmissionRouter f
-func NewSubmissionRouter(repositoryAPI RepositoryAPI, serviceAPI SubmissionServiceAPI) SubmissionAPI {
+func NewSubmissionRouter(userAPI UserAPI, serviceAPI SubmissionServiceAPI) SubmissionAPI {
 
-	submissionAPI := SubmissionRouter{serviceAPI}
+	submissionAPI := SubmissionRouter{userAPI, serviceAPI}
 
 	return &submissionAPI
 }
@@ -22,7 +23,9 @@ func NewSubmissionRouter(repositoryAPI RepositoryAPI, serviceAPI SubmissionServi
 // CreateSubmission f
 func (cr *SubmissionRouter) CreateSubmission(ctx *gin.Context) {
 
-	if submission, err := cr.serviceAPI.CreateSubmission(ctx.Request.Body); err != nil {
+	if user, err := cr.userAPI.Find(ctx); err != nil {
+		ctx.String(http.StatusUnauthorized, err.Error())
+	} else if submission, err := cr.serviceAPI.CreateSubmission(ctx.Request.Body, *user); err != nil {
 		ctx.String(http.StatusInternalServerError, err.Error())
 	} else {
 		ctx.IndentedJSON(http.StatusCreated, submission)

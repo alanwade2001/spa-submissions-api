@@ -13,6 +13,7 @@ import (
 
 func InitialiseServerAPI() ServerAPI {
 	engine := gin.Default()
+	userAPI := NewUserService()
 	repositoryAPI := NewMongoService()
 	xmlParserAPI := NewXMLParserAPI()
 	groupHeaderMapperAPI := NewGroupHeaderMapper()
@@ -20,8 +21,9 @@ func InitialiseServerAPI() ServerAPI {
 	initiationMapperAPI := NewInitiationMapper(groupHeaderMapperAPI, paymentInformationMapperAPI)
 	initiationAPI := NewInitiationService(xmlParserAPI, initiationMapperAPI)
 	validatorAPI := NewValidator()
-	submissionServiceAPI := NewSubmissionService(repositoryAPI, initiationAPI, validatorAPI)
-	submissionAPI := NewSubmissionRouter(repositoryAPI, submissionServiceAPI)
+	customerAPI := NewCustomerService()
+	submissionServiceAPI := NewSubmissionService(repositoryAPI, initiationAPI, validatorAPI, customerAPI)
+	submissionAPI := NewSubmissionRouter(userAPI, submissionServiceAPI)
 	registerAPI := NewRegisterService(engine, submissionAPI)
 	configAPI := NewConfigService()
 	serverAPI := NewServer(engine, registerAPI, configAPI)

@@ -64,7 +64,7 @@ type PaymentInformationMapperAPI interface {
 
 // SubmissionServiceAPI i
 type SubmissionServiceAPI interface {
-	CreateSubmission(io.ReadCloser) (*Submission, error)
+	CreateSubmission(io.ReadCloser, User) (*Submission, error)
 	GetSubmission(ID string) (*Submission, error)
 	GetSubmissions() (*Submissions, error)
 }
@@ -72,4 +72,14 @@ type SubmissionServiceAPI interface {
 // InitiationAPI i
 type InitiationAPI interface {
 	Parse(data []byte) (*Initiation, error)
+}
+
+// CustomerAPI i
+type CustomerAPI interface {
+	Find(user User) (*Customer, error)
+}
+
+// UserAPI i
+type UserAPI interface {
+	Find(*gin.Context) (*User, error)
 }
