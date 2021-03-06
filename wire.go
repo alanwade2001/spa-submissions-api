@@ -29,3 +29,25 @@ func InitialiseServerAPI() ServerAPI {
 
 	return &Server{}
 }
+
+func InitialiseMockedServerAPI() ServerAPI {
+	wire.Build(
+		gin.Default,
+		NewMongoService,
+		NewXMLParserAPI,
+		NewGroupHeaderMapper,
+		NewPaymentInformationMapper,
+		NewInitiationMapper,
+		NewMockCustomerService,
+		NewValidator,
+		NewInitiationService,
+		NewSubmissionService,
+		NewUserService,
+		NewSubmissionRouter,
+		NewRegisterService,
+		NewConfigService,
+		NewServer,
+	)
+
+	return &Server{}
+}

@@ -29,3 +29,22 @@ func InitialiseServerAPI() ServerAPI {
 	serverAPI := NewServer(engine, registerAPI, configAPI)
 	return serverAPI
 }
+
+func InitialiseMockedServerAPI() ServerAPI {
+	engine := gin.Default()
+	userAPI := NewUserService()
+	repositoryAPI := NewMongoService()
+	xmlParserAPI := NewXMLParserAPI()
+	groupHeaderMapperAPI := NewGroupHeaderMapper()
+	paymentInformationMapperAPI := NewPaymentInformationMapper()
+	initiationMapperAPI := NewInitiationMapper(groupHeaderMapperAPI, paymentInformationMapperAPI)
+	initiationAPI := NewInitiationService(xmlParserAPI, initiationMapperAPI)
+	validatorAPI := NewValidator()
+	customerAPI := NewMockCustomerService()
+	submissionServiceAPI := NewSubmissionService(repositoryAPI, initiationAPI, validatorAPI, customerAPI)
+	submissionAPI := NewSubmissionRouter(userAPI, submissionServiceAPI)
+	registerAPI := NewRegisterService(engine, submissionAPI)
+	configAPI := NewConfigService()
+	serverAPI := NewServer(engine, registerAPI, configAPI)
+	return serverAPI
+}
