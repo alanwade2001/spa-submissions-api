@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
+	"k8s.io/klog/v2"
 
 	"encoding/json"
 )
@@ -20,13 +21,15 @@ func NewMessageService() MessageAPI {
 func (ms MessageService) SendInitiation(i Initiation) (err error) {
 	var conn *amqp.Connection
 	var ch *amqp.Channel
+	var q amqp.Queue
 	var data []byte
 
 	if data, err = json.Marshal(i); err != nil {
 		return err
 	}
 
-	if conn, err = amqp.Dial("amqp://guest:guest@localhost:5672/"); err != nil {
+	messageServiceURI := viper.GetString("MESSAGE_SERVICE_URI")
+	if conn, err = amqp.Dial(messageServiceURI); err != nil {
 		return err
 	}
 	defer conn.Close()
@@ -39,10 +42,22 @@ func (ms MessageService) SendInitiation(i Initiation) (err error) {
 	defer ch.Close()
 
 	initiationQueue := viper.GetString("INITIATION_QUEUE")
+	klog.Infof("initiation queue:[%s]", initiationQueue)
+
+	if q, err = ch.QueueDeclare(
+		initiationQueue, // name
+		false,           // durable
+		false,           // delete when unused
+		false,           // exclusive
+		false,           // no-wait
+		nil,             // arguments
+	); err != nil {
+		return err
+	}
 
 	if err = ch.Publish(
 		"",
-		initiationQueue,
+		q.Name,
 		false,
 		false,
 		amqp.Publishing{

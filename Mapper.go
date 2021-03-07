@@ -26,7 +26,7 @@ func (m InitiationMapper) Map(doc types.Document) (*Initiation, error) {
 	//var root types.Node
 	//var ctx *xpath.Context
 	var grpHdr *GroupHeader
-	var pmtInfs []PmtInf
+	var pmtInfs []PaymentInstruction
 
 	if root, err := doc.DocumentElement(); err != nil {
 		return nil, err
@@ -42,7 +42,7 @@ func (m InitiationMapper) Map(doc types.Document) (*Initiation, error) {
 
 	initiation := Initiation{
 		GroupHeader: *grpHdr,
-		PmtInfs:     pmtInfs,
+		PaymentInstructions:     pmtInfs,
 	}
 
 	return &initiation, nil
@@ -75,11 +75,11 @@ func (ghm GroupHeaderMapper) Map(ctx *xpath.Context) (gh *GroupHeader, err error
 	}
 
 	gh = new(GroupHeader)
-	gh.MsgID = xpath.String(grpHdrCtx.Find("ns:MsgId"))
-	gh.CreDtTm = xpath.String(grpHdrCtx.Find("ns:CreDtTm"))
-	gh.NbOfTxs = xpath.String(grpHdrCtx.Find("ns:NbOfTxs"))
-	gh.CtrlSum = xpath.String(grpHdrCtx.Find("ns:CtrlSum"))
-	gh.InitgPty = xpath.String(grpHdrCtx.Find("ns:InitgPty/ns:Id/ns:OrgId/ns:Othr/ns:Id"))
+	gh.MessageID = xpath.String(grpHdrCtx.Find("ns:MsgId"))
+	gh.CreationDateTime = xpath.String(grpHdrCtx.Find("ns:CreDtTm"))
+	gh.NumberOfTransactions = xpath.String(grpHdrCtx.Find("ns:NbOfTxs"))
+	gh.ControlSum = xpath.String(grpHdrCtx.Find("ns:CtrlSum"))
+	gh.InitiatingPartyID = xpath.String(grpHdrCtx.Find("ns:InitgPty/ns:Id/ns:OrgId/ns:Othr/ns:Id"))
 
 	return gh, nil
 }
@@ -94,13 +94,13 @@ func NewPaymentInformationMapper() PaymentInformationMapperAPI {
 }
 
 // Map f
-func (pim PaymentInformationMapper) Map(ctx *xpath.Context) (pis PmtInfs, err error) {
+func (pim PaymentInformationMapper) Map(ctx *xpath.Context) (pis PaymentInstructions, err error) {
 	pmtInfNodes := xpath.NodeList(ctx.Find("/ns:Document/ns:CstmrCdtTrfInitn/ns:PmtInf"))
 
-	pmtInfs := make([]PmtInf, len(pmtInfNodes))
+	pmtInfs := make([]PaymentInstruction, len(pmtInfNodes))
 
 	for i, n := range pmtInfNodes {
-		var pi *PmtInf
+		var pi *PaymentInstruction
 
 		if pi, err = pim.MapPmtInf(n); err != nil {
 			return nil, err
@@ -113,7 +113,7 @@ func (pim PaymentInformationMapper) Map(ctx *xpath.Context) (pis PmtInfs, err er
 }
 
 // MapPmtInf f
-func (pim PaymentInformationMapper) MapPmtInf(pmtInfNode types.Node) (pi *PmtInf, err error) {
+func (pim PaymentInformationMapper) MapPmtInf(pmtInfNode types.Node) (pi *PaymentInstruction, err error) {
 
 	pmtInfCtx, err := xpath.NewContext(pmtInfNode)
 	if err != nil {
@@ -125,13 +125,13 @@ func (pim PaymentInformationMapper) MapPmtInf(pmtInfNode types.Node) (pi *PmtInf
 		return nil, err
 	}
 
-	pi = new(PmtInf)
+	pi = new(PaymentInstruction)
 
-	pi.PmtInfID = xpath.String(pmtInfCtx.Find("ns:PmtInfId"))
-	pi.NbOfTxs = xpath.String(pmtInfCtx.Find("ns:NbOfTxs"))
-	pi.CtrlSum = xpath.String(pmtInfCtx.Find("ns:CtrlSum"))
-	pi.ReqdExctnDt = xpath.String(pmtInfCtx.Find("ns:ReqdExctnDt"))
-	pi.Dbtr = Account{
+	pi.PaymentID = xpath.String(pmtInfCtx.Find("ns:PmtInfId"))
+	pi.NumberOfTransactions = xpath.String(pmtInfCtx.Find("ns:NbOfTxs"))
+	pi.ControlSum = xpath.String(pmtInfCtx.Find("ns:CtrlSum"))
+	pi.RequestedExecutionDate = xpath.String(pmtInfCtx.Find("ns:ReqdExctnDt"))
+	pi.Debtor = Account{
 		Name: xpath.String(pmtInfCtx.Find("ns:Dbtr/ns:Nm")),
 		IBAN: xpath.String(pmtInfCtx.Find("ns:DbtrAcct/ns:Id/ns:IBAN")),
 		BIC:  xpath.String(pmtInfCtx.Find("ns:DbtrAgt/ns:FinInstnId/ns:BIC")),

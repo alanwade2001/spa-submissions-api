@@ -65,31 +65,31 @@ type Result struct {
 
 // Initiation s
 type Initiation struct {
-	GroupHeader GroupHeader
-	PmtInfs     PmtInfs
-	Customer    *Customer
+	GroupHeader         GroupHeader
+	PaymentInstructions PaymentInstructions
+	Customer            *Customer
 }
 
 // GroupHeader s
 type GroupHeader struct {
-	MsgID    string
-	CreDtTm  string
-	NbOfTxs  string
-	CtrlSum  string
-	InitgPty string
+	MessageID            string
+	CreationDateTime     string
+	NumberOfTransactions string
+	ControlSum           string
+	InitiatingPartyID    string
 }
 
-// PmtInf s
-type PmtInf struct {
-	PmtInfID    string
-	NbOfTxs     string
-	CtrlSum     string
-	ReqdExctnDt string
-	Dbtr        Account
+// PaymentInstruction s
+type PaymentInstruction struct {
+	PaymentID              string
+	NumberOfTransactions   string
+	ControlSum             string
+	RequestedExecutionDate string
+	Debtor                 Account
 }
 
-// PmtInfs a
-type PmtInfs []PmtInf
+// PaymentInstructions a
+type PaymentInstructions []PaymentInstruction
 
 // Account s
 type Account struct {

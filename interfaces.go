@@ -64,7 +64,7 @@ type GroupHeaderMapperAPI interface {
 
 // PaymentInformationMapperAPI i
 type PaymentInformationMapperAPI interface {
-	Map(*xpath.Context) (PmtInfs, error)
+	Map(*xpath.Context) (PaymentInstructions, error)
 }
 
 // SubmissionServiceAPI i
