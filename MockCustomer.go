@@ -1,5 +1,7 @@
 package main
 
+import types "github.com/alanwade2001/spa-common"
+
 // MockCustomerService s
 type MockCustomerService struct {
 }
@@ -10,7 +12,13 @@ func NewMockCustomerService() CustomerAPI {
 }
 
 // Find f
-func (cs MockCustomerService) Find(user User) (*Customer, error) {
+func (cs MockCustomerService) Find(user types.UserReference) (*types.CustomerReference, error) {
 
-	return &Customer{ID: "1", Name: "Corporation ABC", InitiatingPartyID: "112233"}, nil
+	return &types.CustomerReference{
+		CustomerID: "1",
+		Name:       "Corporation ABC",
+		InitiatingParty: types.InitiatingPartyReference{
+			InitiatingPartyID: "112233",
+		},
+	}, nil
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 
+	types "github.com/alanwade2001/spa-common"
 	"github.com/go-resty/resty/v2"
 	"github.com/spf13/viper"
 )
@@ -17,7 +18,7 @@ func NewCustomerService() CustomerAPI {
 }
 
 // Find f
-func (cs CustomerService) Find(user User) (customer *Customer, err error) {
+func (cs CustomerService) Find(user types.UserReference) (customer *types.CustomerReference, err error) {
 
 	// Create a resty client
 	client := resty.New()
@@ -25,11 +26,11 @@ func (cs CustomerService) Find(user User) (customer *Customer, err error) {
 	customerURI := fmt.Sprintf(customerURITemplate, user.Email)
 	var resp *resty.Response
 
-	if resp, err = client.R().SetResult(&Customer{}).Get(customerURI); err != nil {
+	if resp, err = client.R().SetResult(&types.CustomerReference{}).Get(customerURI); err != nil {
 		return nil, err
 	}
 
-	customer = resp.Result().(*Customer)
+	customer = resp.Result().(*types.CustomerReference)
 
 	return customer, nil
 }

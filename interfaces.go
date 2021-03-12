@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 
+	spatypes "github.com/alanwade2001/spa-common"
 	"github.com/gin-gonic/gin"
 	"github.com/lestrrat-go/libxml2/types"
 	"github.com/lestrrat-go/libxml2/xpath"
@@ -34,7 +35,7 @@ type RepositoryAPI interface {
 
 // MessageAPI i
 type MessageAPI interface {
-	SendInitiation(i Initiation) error
+	SendInitiation(i spatypes.Initiation) error
 }
 
 // ConfigAPI si
@@ -49,42 +50,42 @@ type XMLParserAPI interface {
 
 // ValidatorAPI i
 type ValidatorAPI interface {
-	Validate(initiation Initiation) (*Result, error)
+	Validate(initiation spatypes.Initiation) (*Result, error)
 }
 
 // InitiationMapperAPI i
 type InitiationMapperAPI interface {
-	Map(types.Document) (*Initiation, error)
+	Map(types.Document) (*spatypes.Initiation, error)
 }
 
 // GroupHeaderMapperAPI i
 type GroupHeaderMapperAPI interface {
-	Map(*xpath.Context) (*GroupHeader, error)
+	Map(*xpath.Context) (*spatypes.GroupHeader, error)
 }
 
 // PaymentInformationMapperAPI i
 type PaymentInformationMapperAPI interface {
-	Map(*xpath.Context) (PaymentInstructions, error)
+	Map(*xpath.Context) (*[]spatypes.PaymentInstruction, error)
 }
 
 // SubmissionServiceAPI i
 type SubmissionServiceAPI interface {
-	CreateSubmission(io.ReadCloser, User) (*Submission, error)
+	CreateSubmission(io.ReadCloser, spatypes.UserReference) (*Submission, error)
 	GetSubmission(ID string) (*Submission, error)
 	GetSubmissions() (*Submissions, error)
 }
 
 // InitiationAPI i
 type InitiationAPI interface {
-	Parse(data []byte) (*Initiation, error)
+	Parse(data []byte) (*spatypes.Initiation, error)
 }
 
 // CustomerAPI i
 type CustomerAPI interface {
-	Find(user User) (*Customer, error)
+	Find(user spatypes.UserReference) (*spatypes.CustomerReference, error)
 }
 
 // UserAPI i
 type UserAPI interface {
-	Find(*gin.Context) (*User, error)
+	Find(*gin.Context) (*spatypes.UserReference, error)
 }

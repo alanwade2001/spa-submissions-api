@@ -1,6 +1,7 @@
 package main
 
 import (
+	types "github.com/alanwade2001/spa-common"
 	"github.com/spf13/viper"
 	"github.com/streadway/amqp"
 	"k8s.io/klog/v2"
@@ -18,7 +19,7 @@ func NewMessageService() MessageAPI {
 }
 
 // SendInitiation f
-func (ms MessageService) SendInitiation(i Initiation) (err error) {
+func (ms MessageService) SendInitiation(i types.Initiation) (err error) {
 	var conn *amqp.Connection
 	var ch *amqp.Channel
 	var q amqp.Queue

@@ -5,6 +5,8 @@ import (
 
 	"github.com/lestrrat-go/libxml2/types"
 	"github.com/lestrrat-go/libxml2/xpath"
+
+	spatypes "github.com/alanwade2001/spa-common"
 )
 
 // InitiationMapper s
@@ -22,11 +24,11 @@ func NewInitiationMapper(groupHeaderMapperAPI GroupHeaderMapperAPI, paymentInfor
 }
 
 // Map f
-func (m InitiationMapper) Map(doc types.Document) (*Initiation, error) {
+func (m InitiationMapper) Map(doc types.Document) (*spatypes.Initiation, error) {
 	//var root types.Node
 	//var ctx *xpath.Context
-	var grpHdr *GroupHeader
-	var pmtInfs []PaymentInstruction
+	var grpHdr *spatypes.GroupHeader
+	var pmtInfs *[]spatypes.PaymentInstruction
 
 	if root, err := doc.DocumentElement(); err != nil {
 		return nil, err
@@ -40,9 +42,9 @@ func (m InitiationMapper) Map(doc types.Document) (*Initiation, error) {
 		return nil, err
 	}
 
-	initiation := Initiation{
-		GroupHeader: *grpHdr,
-		PaymentInstructions:     pmtInfs,
+	initiation := spatypes.Initiation{
+		GroupHeader:         *grpHdr,
+		PaymentInstructions: *pmtInfs,
 	}
 
 	return &initiation, nil
@@ -58,7 +60,7 @@ func NewGroupHeaderMapper() GroupHeaderMapperAPI {
 }
 
 // Map f
-func (ghm GroupHeaderMapper) Map(ctx *xpath.Context) (gh *GroupHeader, err error) {
+func (ghm GroupHeaderMapper) Map(ctx *xpath.Context) (gh *spatypes.GroupHeader, err error) {
 	var grpHdrIter types.NodeIter
 
 	if grpHdrIter = xpath.NodeIter(ctx.Find("/ns:Document/ns:CstmrCdtTrfInitn/ns:GrpHdr")); grpHdrIter.Next() == false {
@@ -74,12 +76,12 @@ func (ghm GroupHeaderMapper) Map(ctx *xpath.Context) (gh *GroupHeader, err error
 		return nil, err
 	}
 
-	gh = new(GroupHeader)
+	gh = new(spatypes.GroupHeader)
 	gh.MessageID = xpath.String(grpHdrCtx.Find("ns:MsgId"))
 	gh.CreationDateTime = xpath.String(grpHdrCtx.Find("ns:CreDtTm"))
 	gh.NumberOfTransactions = xpath.String(grpHdrCtx.Find("ns:NbOfTxs"))
 	gh.ControlSum = xpath.String(grpHdrCtx.Find("ns:CtrlSum"))
-	gh.InitiatingPartyID = xpath.String(grpHdrCtx.Find("ns:InitgPty/ns:Id/ns:OrgId/ns:Othr/ns:Id"))
+	gh.InitiatingParty.InitiatingPartyID = xpath.String(grpHdrCtx.Find("ns:InitgPty/ns:Id/ns:OrgId/ns:Othr/ns:Id"))
 
 	return gh, nil
 }
@@ -94,13 +96,13 @@ func NewPaymentInformationMapper() PaymentInformationMapperAPI {
 }
 
 // Map f
-func (pim PaymentInformationMapper) Map(ctx *xpath.Context) (pis PaymentInstructions, err error) {
+func (pim PaymentInformationMapper) Map(ctx *xpath.Context) (pis *[]spatypes.PaymentInstruction, err error) {
 	pmtInfNodes := xpath.NodeList(ctx.Find("/ns:Document/ns:CstmrCdtTrfInitn/ns:PmtInf"))
 
-	pmtInfs := make([]PaymentInstruction, len(pmtInfNodes))
+	pmtInfs := make([]spatypes.PaymentInstruction, len(pmtInfNodes))
 
 	for i, n := range pmtInfNodes {
-		var pi *PaymentInstruction
+		var pi *spatypes.PaymentInstruction
 
 		if pi, err = pim.MapPmtInf(n); err != nil {
 			return nil, err
@@ -109,11 +111,11 @@ func (pim PaymentInformationMapper) Map(ctx *xpath.Context) (pis PaymentInstruct
 		pmtInfs[i] = *pi
 	}
 
-	return pmtInfs, nil
+	return &pmtInfs, nil
 }
 
 // MapPmtInf f
-func (pim PaymentInformationMapper) MapPmtInf(pmtInfNode types.Node) (pi *PaymentInstruction, err error) {
+func (pim PaymentInformationMapper) MapPmtInf(pmtInfNode types.Node) (pi *spatypes.PaymentInstruction, err error) {
 
 	pmtInfCtx, err := xpath.NewContext(pmtInfNode)
 	if err != nil {
@@ -125,13 +127,13 @@ func (pim PaymentInformationMapper) MapPmtInf(pmtInfNode types.Node) (pi *Paymen
 		return nil, err
 	}
 
-	pi = new(PaymentInstruction)
+	pi = new(spatypes.PaymentInstruction)
 
 	pi.PaymentID = xpath.String(pmtInfCtx.Find("ns:PmtInfId"))
 	pi.NumberOfTransactions = xpath.String(pmtInfCtx.Find("ns:NbOfTxs"))
 	pi.ControlSum = xpath.String(pmtInfCtx.Find("ns:CtrlSum"))
 	pi.RequestedExecutionDate = xpath.String(pmtInfCtx.Find("ns:ReqdExctnDt"))
-	pi.Debtor = Account{
+	pi.Debtor = spatypes.AccountReference{
 		Name: xpath.String(pmtInfCtx.Find("ns:Dbtr/ns:Nm")),
 		IBAN: xpath.String(pmtInfCtx.Find("ns:DbtrAcct/ns:Id/ns:IBAN")),
 		BIC:  xpath.String(pmtInfCtx.Find("ns:DbtrAgt/ns:FinInstnId/ns:BIC")),

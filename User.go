@@ -1,6 +1,7 @@
 package main
 
 import (
+	types "github.com/alanwade2001/spa-common"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +15,7 @@ func NewUserService() UserAPI {
 }
 
 // Find f
-func (us UserService) Find(ctx *gin.Context) (*User, error) {
+func (us UserService) Find(ctx *gin.Context) (*types.UserReference, error) {
 
 	email := ctx.GetHeader("Email")
 
@@ -22,5 +23,5 @@ func (us UserService) Find(ctx *gin.Context) (*User, error) {
 		return nil, nil
 	}
 
-	return &User{Email: email}, nil
+	return &types.UserReference{Email: email}, nil
 }

@@ -1,6 +1,10 @@
 package main
 
-import "io"
+import (
+	"io"
+
+	types "github.com/alanwade2001/spa-common"
+)
 
 // SubmissionService s
 type SubmissionService struct {
@@ -24,11 +28,11 @@ func NewSubmissionService(repositoryAPI RepositoryAPI, initiationAPI InitiationA
 }
 
 // CreateSubmission f
-func (s SubmissionService) CreateSubmission(rc io.ReadCloser, user User) (submission *Submission, err error) {
-	var initiation *Initiation
+func (s SubmissionService) CreateSubmission(rc io.ReadCloser, user types.UserReference) (submission *Submission, err error) {
+	var initiation *types.Initiation
 	var result *Result
 	var data []byte
-	var customer *Customer
+	var customer *types.CustomerReference
 
 	if customer, err = s.customerAPI.Find(user); err != nil {
 		return nil, err
@@ -37,7 +41,7 @@ func (s SubmissionService) CreateSubmission(rc io.ReadCloser, user User) (submis
 	} else if initiation, err = s.initiationAPI.Parse(data); err != nil {
 		return nil, err
 	} else {
-		initiation.Customer = customer
+		//initiation.Customer = customer
 	}
 
 	if result, err = s.validatorAPI.Validate(*initiation); err != nil {

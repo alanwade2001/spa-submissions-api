@@ -1,38 +1,18 @@
 package main
 
+import types "github.com/alanwade2001/spa-common"
+
 // Submission s
 type Submission struct {
 	ID               string `bson:"_id"`
-	Initiation       *Initiation
+	Initiation       *types.Initiation
 	ValidationResult Result
-	Customer         *Customer
-	Submitter        User
+	Customer         *types.CustomerReference
+	Submitter        types.UserReference
 }
 
 // Submissions a
 type Submissions []Submission
-
-// User s
-type User struct {
-	Email string
-}
-
-// Users a
-type Users []User
-
-// Roles s
-type Roles struct {
-	Submitters Users
-	Approvers  Users
-	Admins     Users
-}
-
-// Customer s
-type Customer struct {
-	ID                string
-	Name              string
-	InitiatingPartyID string
-}
 
 // Failure s
 type Failure struct {
@@ -61,39 +41,4 @@ const (
 type Result struct {
 	Success  bool
 	Failures Failures
-}
-
-// Initiation s
-type Initiation struct {
-	GroupHeader         GroupHeader
-	PaymentInstructions PaymentInstructions
-	Customer            *Customer
-}
-
-// GroupHeader s
-type GroupHeader struct {
-	MessageID            string
-	CreationDateTime     string
-	NumberOfTransactions string
-	ControlSum           string
-	InitiatingPartyID    string
-}
-
-// PaymentInstruction s
-type PaymentInstruction struct {
-	PaymentID              string
-	NumberOfTransactions   string
-	ControlSum             string
-	RequestedExecutionDate string
-	Debtor                 Account
-}
-
-// PaymentInstructions a
-type PaymentInstructions []PaymentInstruction
-
-// Account s
-type Account struct {
-	Name string
-	IBAN string
-	BIC  string
 }
