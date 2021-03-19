@@ -6,48 +6,53 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/wire"
+
+	"github.com/alanwade2001/spa-submissions-api/repositories"
+	"github.com/alanwade2001/spa-submissions-api/routers"
+	"github.com/alanwade2001/spa-submissions-api/services"
+	"github.com/alanwade2001/spa-submissions-api/types"
 )
 
-func InitialiseServerAPI() ServerAPI {
+func InitialiseServerAPI() types.ServerAPI {
 	wire.Build(
 		gin.Default,
-		NewMongoService,
-		NewMessageService,
-		NewXMLParserAPI,
-		NewGroupHeaderMapper,
-		NewPaymentInformationMapper,
-		NewInitiationMapper,
-		NewCustomerService,
-		NewValidator,
-		NewInitiationService,
-		NewSubmissionService,
-		NewUserService,
-		NewSubmissionRouter,
-		NewRegisterService,
-		NewConfigService,
+		repositories.NewMongoService,
+		services.NewMessageService,
+		services.NewXMLParserAPI,
+		services.NewGroupHeaderMapper,
+		services.NewPaymentInformationMapper,
+		services.NewInitiationMapper,
+		services.NewCustomerService,
+		services.NewValidator,
+		services.NewInitiationService,
+		services.NewSubmissionService,
+		services.NewUserService,
+		routers.NewSubmissionRouter,
+		routers.NewRegisterService,
+		services.NewConfigService,
 		NewServer,
 	)
 
 	return &Server{}
 }
 
-func InitialiseMockedServerAPI() ServerAPI {
+func InitialiseMockedServerAPI() types.ServerAPI {
 	wire.Build(
 		gin.Default,
-		NewMongoService,
-		NewMessageService,
-		NewXMLParserAPI,
-		NewGroupHeaderMapper,
-		NewPaymentInformationMapper,
-		NewInitiationMapper,
-		NewMockCustomerService,
-		NewValidator,
-		NewInitiationService,
-		NewSubmissionService,
-		NewUserService,
-		NewSubmissionRouter,
-		NewRegisterService,
-		NewConfigService,
+		repositories.NewMongoService,
+		services.NewMessageService,
+		services.NewXMLParserAPI,
+		services.NewGroupHeaderMapper,
+		services.NewPaymentInformationMapper,
+		services.NewInitiationMapper,
+		services.NewMockCustomerService,
+		services.NewValidator,
+		services.NewInitiationService,
+		services.NewSubmissionService,
+		services.NewUserService,
+		routers.NewSubmissionRouter,
+		routers.NewRegisterService,
+		services.NewConfigService,
 		NewServer,
 	)
 
