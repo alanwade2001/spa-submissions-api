@@ -54,64 +54,6 @@ func (ms *MongoRepository) GetService() *mgo.MongoService {
 	return ms.service
 }
 
-// MongoConnection s
-// type MongoConnection struct {
-// 	client *mongo.Client
-// 	ctx    context.Context
-// 	cancel context.CancelFunc
-// }
-
-// // Disconnect f
-// func (mc *MongoConnection) Disconnect() {
-// 	mc.cancel()
-// 	mc.client.Disconnect(mc.ctx)
-// }
-
-// Connect f
-// func (ms MongoRepository) connect() MongoConnection {
-// 	username := viper.GetString("MONGODB_USER")
-// 	klog.Infof("mongo user: [%s]", username)
-// 	password := viper.GetString("MONGODB_PASSWORD")
-// 	uriTemplate := viper.GetString("MONGODB_URI_TEMPLATE")
-// 	klog.Infof("uriTemplate: [%s]", uriTemplate)
-
-// 	connectionURI := fmt.Sprintf(uriTemplate, username, password)
-
-// 	structcodec, _ := bsoncodec.NewStructCodec(bsoncodec.JSONFallbackStructTagParser)
-// 	reg := bson.NewRegistryBuilder().
-// 		RegisterTypeEncoder(reflect.TypeOf(submission.SubmissionModel{}), structcodec).
-// 		RegisterTypeDecoder(reflect.TypeOf(submission.SubmissionModel{}), structcodec).
-// 		Build()
-
-// 	client, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetRegistry(reg))
-// 	if err != nil {
-// 		klog.Warningf("Failed to create client: %v", err)
-// 	}
-
-// 	connectTimeout := viper.GetDuration("MONGODB_TIMEOUT") * time.Second
-// 	ctx, cancel := context.WithTimeout(context.Background(), connectTimeout)
-
-// 	err = client.Connect(ctx)
-// 	if err != nil {
-// 		klog.Warningf("Failed to connect to cluster: %v", err)
-// 	}
-
-// 	// Force a connection to verify our connection string
-// 	err = client.Ping(ctx, nil)
-// 	if err != nil {
-// 		klog.Warningf("Failed to ping cluster: %v", err)
-// 	}
-
-// 	klog.Infof("Connected to MongoDB!")
-
-// 	return MongoConnection{client, ctx, cancel}
-// }
-
-// func (ms MongoRepository) getCollection(connection MongoConnection) *mongo.Collection {
-// 	database := viper.GetString("MONGODB_DATABASE")
-// 	return connection.client.Database(database).Collection("Submissions")
-// }
-
 // CreateSubmission f
 func (ms MongoRepository) CreateSubmission(submission *submission.SubmissionModel) (*submission.SubmissionModel, error) {
 	connection := ms.GetService().Connect()
