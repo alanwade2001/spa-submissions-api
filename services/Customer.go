@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 
+	"github.com/alanwade2001/spa-submissions-api/models/generated/customer"
 	"github.com/alanwade2001/spa-submissions-api/models/generated/submission"
 	"github.com/alanwade2001/spa-submissions-api/types"
 	"github.com/go-resty/resty/v2"
@@ -19,19 +20,25 @@ func NewCustomerService() types.CustomerAPI {
 }
 
 // Find f
-func (cs CustomerService) Find(user submission.UserReference) (customer *submission.CustomerReference, err error) {
+func (cs CustomerService) Find(user submission.UserReference) (customerRef *submission.CustomerReference, err error) {
 
 	// Create a resty client
 	client := resty.New()
+	client.SetDebug(true)
 	customerURITemplate := viper.GetString("CUSTOMER_URI_TEMPLATE")
 	customerURI := fmt.Sprintf(customerURITemplate, user.Email)
 	var resp *resty.Response
 
-	if resp, err = client.R().SetResult(&submission.CustomerReference{}).Get(customerURI); err != nil {
+	if resp, err = client.R().SetResult(&customer.CustomerModel{}).Get(customerURI); err != nil {
 		return nil, err
 	}
 
-	customer = resp.Result().(*submission.CustomerReference)
+	customerModel := resp.Result().(*customer.CustomerModel)
 
-	return customer, nil
+	customerRef = &submission.CustomerReference{
+		Id:   customerModel.Id,
+		Name: customerModel.Name,
+	}
+
+	return customerRef, nil
 }

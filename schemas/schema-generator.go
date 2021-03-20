@@ -5,3 +5,6 @@ package types
 
 //go:generate mkdir -p ../models/generated/initiation
 //go:generate schema-generate -i ./initiationmodel-schema-v1.0.json -o ../models/generated/initiation/InitiationModel.go -p initiation
+
+//go:generate mkdir -p ../models/generated/customer
+//go:generate schema-generate -i ./customermodel-schema-v1.0.json -o ../models/generated/customer/CustomerModel.go -p customer
