@@ -18,6 +18,7 @@ import (
 func InitialiseServerAPI() types.ServerAPI {
 	engine := gin.Default()
 	userAPI := services.NewUserService()
+	idGeneratorAPI := services.NewMongoIdGenerator()
 	repositoryAPI := repositories.NewMongoService()
 	xmlParserAPI := services.NewXMLParserAPI()
 	groupHeaderMapperAPI := services.NewGroupHeaderMapper()
@@ -27,7 +28,7 @@ func InitialiseServerAPI() types.ServerAPI {
 	validatorAPI := services.NewValidator()
 	customerAPI := services.NewCustomerService()
 	messageAPI := services.NewMessageService()
-	submissionServiceAPI := services.NewSubmissionService(repositoryAPI, initiationAPI, validatorAPI, customerAPI, messageAPI)
+	submissionServiceAPI := services.NewSubmissionService(idGeneratorAPI, repositoryAPI, initiationAPI, validatorAPI, customerAPI, messageAPI)
 	submissionAPI := routers.NewSubmissionRouter(userAPI, submissionServiceAPI)
 	registerAPI := routers.NewRegisterService(engine, submissionAPI)
 	configAPI := services.NewConfigService()
@@ -38,6 +39,7 @@ func InitialiseServerAPI() types.ServerAPI {
 func InitialiseMockedServerAPI() types.ServerAPI {
 	engine := gin.Default()
 	userAPI := services.NewUserService()
+	idGeneratorAPI := services.NewMongoIdGenerator()
 	repositoryAPI := repositories.NewMongoService()
 	xmlParserAPI := services.NewXMLParserAPI()
 	groupHeaderMapperAPI := services.NewGroupHeaderMapper()
@@ -47,7 +49,7 @@ func InitialiseMockedServerAPI() types.ServerAPI {
 	validatorAPI := services.NewValidator()
 	customerAPI := services.NewMockCustomerService()
 	messageAPI := services.NewMessageService()
-	submissionServiceAPI := services.NewSubmissionService(repositoryAPI, initiationAPI, validatorAPI, customerAPI, messageAPI)
+	submissionServiceAPI := services.NewSubmissionService(idGeneratorAPI, repositoryAPI, initiationAPI, validatorAPI, customerAPI, messageAPI)
 	submissionAPI := routers.NewSubmissionRouter(userAPI, submissionServiceAPI)
 	registerAPI := routers.NewRegisterService(engine, submissionAPI)
 	configAPI := services.NewConfigService()

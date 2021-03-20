@@ -11,21 +11,23 @@ import (
 
 // SubmissionService s
 type SubmissionService struct {
-	repositoryAPI types.RepositoryAPI
-	initiationAPI types.InitiationAPI
-	validatorAPI  types.ValidatorAPI
-	customerAPI   types.CustomerAPI
-	messageAPI    types.MessageAPI
+	repositoryAPI  types.RepositoryAPI
+	initiationAPI  types.InitiationAPI
+	validatorAPI   types.ValidatorAPI
+	customerAPI    types.CustomerAPI
+	messageAPI     types.MessageAPI
+	idGeneratorAPI types.IdGeneratorAPI
 }
 
 // NewSubmissionService f
-func NewSubmissionService(repositoryAPI types.RepositoryAPI, initiationAPI types.InitiationAPI, validatorAPI types.ValidatorAPI, customerAPI types.CustomerAPI, messageAPI types.MessageAPI) types.SubmissionServiceAPI {
+func NewSubmissionService(idGeneratorAPI types.IdGeneratorAPI, repositoryAPI types.RepositoryAPI, initiationAPI types.InitiationAPI, validatorAPI types.ValidatorAPI, customerAPI types.CustomerAPI, messageAPI types.MessageAPI) types.SubmissionServiceAPI {
 	service := SubmissionService{
-		repositoryAPI: repositoryAPI,
-		initiationAPI: initiationAPI,
-		validatorAPI:  validatorAPI,
-		customerAPI:   customerAPI,
-		messageAPI:    messageAPI,
+		idGeneratorAPI: idGeneratorAPI,
+		repositoryAPI:  repositoryAPI,
+		initiationAPI:  initiationAPI,
+		validatorAPI:   validatorAPI,
+		customerAPI:    customerAPI,
+		messageAPI:     messageAPI,
 	}
 	return service
 }
@@ -65,6 +67,8 @@ func (s SubmissionService) CreateSubmission(rc io.ReadCloser, user submission.Us
 	if model, err = s.repositoryAPI.CreateSubmission(model); err != nil {
 		return nil, err
 	}
+
+	init.Id = s.idGeneratorAPI.Next()
 
 	init.Customer = &initiation.CustomerReference{
 		CustomerId:   customer.Id,

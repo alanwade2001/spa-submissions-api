@@ -16,6 +16,7 @@ import (
 func InitialiseServerAPI() types.ServerAPI {
 	wire.Build(
 		gin.Default,
+		services.NewMongoIdGenerator,
 		repositories.NewMongoService,
 		services.NewMessageService,
 		services.NewXMLParserAPI,
@@ -39,6 +40,7 @@ func InitialiseServerAPI() types.ServerAPI {
 func InitialiseMockedServerAPI() types.ServerAPI {
 	wire.Build(
 		gin.Default,
+		services.NewMongoIdGenerator,
 		repositories.NewMongoService,
 		services.NewMessageService,
 		services.NewXMLParserAPI,

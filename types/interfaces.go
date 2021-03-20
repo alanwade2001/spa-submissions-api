@@ -91,3 +91,7 @@ type CustomerAPI interface {
 type UserAPI interface {
 	Find(*gin.Context) (*submission.UserReference, error)
 }
+
+type IdGeneratorAPI interface {
+	Next() string
+}
