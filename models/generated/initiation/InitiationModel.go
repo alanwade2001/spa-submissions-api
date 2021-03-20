@@ -4,8 +4,8 @@ package initiation
 
 import (
     "bytes"
-    "encoding/json"
     "errors"
+    "encoding/json"
 )
 
 // AccountReference AccountReference
@@ -21,10 +21,10 @@ type AccountReference struct {
 type CustomerReference struct {
 
   // The unique identifier for a customer
-  CustomerId string `json:"CustomerId"`
+  CustomerId string `json:"CustomerId,omitempty"`
 
   // The name of the customer
-  CustomerName string `json:"CustomerName"`
+  CustomerName string `json:"CustomerName,omitempty"`
 }
 
 // GroupHeaderReference GroupHeader Reference of the initiation
@@ -39,7 +39,7 @@ type GroupHeaderReference struct {
 // InitiationModel 
 type InitiationModel struct {
   Customer *CustomerReference `json:"Customer,omitempty"`
-  GroupHeader *GroupHeaderReference `json:"GroupHeader,omitempty"`
+  GroupHeader *GroupHeaderReference `json:"GroupHeader"`
   Id string `json:"_id,omitempty"`
   PaymentInstructions []*PaymentInstructionReference `json:"PaymentInstructions,omitempty"`
 }
@@ -62,31 +62,53 @@ type SubmissionReference struct {
   SubmittedBy string `json:"SubmittedBy,omitempty"`
 }
 
-func (strct *CustomerReference) MarshalJSON() ([]byte, error) {
+func (strct *InitiationModel) MarshalJSON() ([]byte, error) {
 	buf := bytes.NewBuffer(make([]byte, 0))
 	buf.WriteString("{")
     comma := false
-    // "CustomerId" field is required
-    // only required object types supported for marshal checking (for now)
-    // Marshal the "CustomerId" field
+    // Marshal the "Customer" field
     if comma { 
         buf.WriteString(",") 
     }
-    buf.WriteString("\"CustomerId\": ")
-	if tmp, err := json.Marshal(strct.CustomerId); err != nil {
+    buf.WriteString("\"Customer\": ")
+	if tmp, err := json.Marshal(strct.Customer); err != nil {
 		return nil, err
  	} else {
  		buf.Write(tmp)
 	}
 	comma = true
-    // "CustomerName" field is required
-    // only required object types supported for marshal checking (for now)
-    // Marshal the "CustomerName" field
+    // "GroupHeader" field is required
+    if strct.GroupHeader == nil {
+        return nil, errors.New("GroupHeader is a required field")
+    }
+    // Marshal the "GroupHeader" field
     if comma { 
         buf.WriteString(",") 
     }
-    buf.WriteString("\"CustomerName\": ")
-	if tmp, err := json.Marshal(strct.CustomerName); err != nil {
+    buf.WriteString("\"GroupHeader\": ")
+	if tmp, err := json.Marshal(strct.GroupHeader); err != nil {
+		return nil, err
+ 	} else {
+ 		buf.Write(tmp)
+	}
+	comma = true
+    // Marshal the "_id" field
+    if comma { 
+        buf.WriteString(",") 
+    }
+    buf.WriteString("\"_id\": ")
+	if tmp, err := json.Marshal(strct.Id); err != nil {
+		return nil, err
+ 	} else {
+ 		buf.Write(tmp)
+	}
+	comma = true
+    // Marshal the "PaymentInstructions" field
+    if comma { 
+        buf.WriteString(",") 
+    }
+    buf.WriteString("\"PaymentInstructions\": ")
+	if tmp, err := json.Marshal(strct.PaymentInstructions); err != nil {
 		return nil, err
  	} else {
  		buf.Write(tmp)
@@ -98,9 +120,8 @@ func (strct *CustomerReference) MarshalJSON() ([]byte, error) {
 	return rv, nil
 }
 
-func (strct *CustomerReference) UnmarshalJSON(b []byte) error {
-    CustomerIdReceived := false
-    CustomerNameReceived := false
+func (strct *InitiationModel) UnmarshalJSON(b []byte) error {
+    GroupHeaderReceived := false
     var jsonMap map[string]json.RawMessage
     if err := json.Unmarshal(b, &jsonMap); err != nil {
         return err
@@ -108,25 +129,28 @@ func (strct *CustomerReference) UnmarshalJSON(b []byte) error {
     // parse all the defined properties
     for k, v := range jsonMap {
         switch k {
-        case "CustomerId":
-            if err := json.Unmarshal([]byte(v), &strct.CustomerId); err != nil {
+        case "Customer":
+            if err := json.Unmarshal([]byte(v), &strct.Customer); err != nil {
                 return err
              }
-            CustomerIdReceived = true
-        case "CustomerName":
-            if err := json.Unmarshal([]byte(v), &strct.CustomerName); err != nil {
+        case "GroupHeader":
+            if err := json.Unmarshal([]byte(v), &strct.GroupHeader); err != nil {
                 return err
              }
-            CustomerNameReceived = true
+            GroupHeaderReceived = true
+        case "_id":
+            if err := json.Unmarshal([]byte(v), &strct.Id); err != nil {
+                return err
+             }
+        case "PaymentInstructions":
+            if err := json.Unmarshal([]byte(v), &strct.PaymentInstructions); err != nil {
+                return err
+             }
         }
     }
-    // check if CustomerId (a required property) was received
-    if !CustomerIdReceived {
-        return errors.New("\"CustomerId\" is required but was not present")
-    }
-    // check if CustomerName (a required property) was received
-    if !CustomerNameReceived {
-        return errors.New("\"CustomerName\" is required but was not present")
+    // check if GroupHeader (a required property) was received
+    if !GroupHeaderReceived {
+        return errors.New("\"GroupHeader\" is required but was not present")
     }
     return nil
 }

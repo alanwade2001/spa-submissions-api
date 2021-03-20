@@ -3,9 +3,9 @@
 package customer
 
 import (
+    "bytes"
     "encoding/json"
     "errors"
-    "bytes"
 )
 
 // AccountReference 
