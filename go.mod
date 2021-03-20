@@ -3,6 +3,7 @@ module github.com/alanwade2001/spa-submissions-api
 go 1.16
 
 require (
+	github.com/alanwade2001/spa-common v1.1.2 // indirect
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-resty/resty/v2 v2.5.0
 	github.com/google/wire v0.5.0
