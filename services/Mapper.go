@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"strconv"
 
 	xml "github.com/lestrrat-go/libxml2/types"
 	"github.com/lestrrat-go/libxml2/xpath"
@@ -80,8 +81,10 @@ func (ghm GroupHeaderMapper) Map(ctx *xpath.Context) (gh *initiation.GroupHeader
 	gh = new(initiation.GroupHeaderReference)
 	gh.MessageId = xpath.String(grpHdrCtx.Find("ns:MsgId"))
 	gh.CreationDateTime = xpath.String(grpHdrCtx.Find("ns:CreDtTm"))
-	gh.NumberOfTransactions = xpath.Number(grpHdrCtx.Find("ns:NbOfTxs"))
-	gh.ControlSum = xpath.Number(grpHdrCtx.Find("ns:CtrlSum"))
+	nbOfTxs := xpath.String(grpHdrCtx.Find("ns:NbOfTxs"))
+	gh.NumberOfTransactions, _ = strconv.ParseFloat(nbOfTxs, 64)
+	ctrlSum := xpath.String(grpHdrCtx.Find("ns:CtrlSum"))
+	gh.ControlSum, _ = strconv.ParseFloat(ctrlSum, 64)
 	gh.InitiatingPartyId = xpath.String(grpHdrCtx.Find("ns:InitgPty/ns:Id/ns:OrgId/ns:Othr/ns:Id"))
 
 	return gh, nil

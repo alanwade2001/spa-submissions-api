@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"time"
 
 	"github.com/alanwade2001/spa-submissions-api/models/generated/submission"
 	"github.com/alanwade2001/spa-submissions-api/types"
 	"github.com/spf13/viper"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/bsoncodec"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -49,7 +51,13 @@ func (ms MongoService) connect() MongoConnection {
 
 	connectionURI := fmt.Sprintf(uriTemplate, username, password)
 
-	client, err := mongo.NewClient(options.Client().ApplyURI(connectionURI))
+	structcodec, _ := bsoncodec.NewStructCodec(bsoncodec.JSONFallbackStructTagParser)
+	reg := bson.NewRegistryBuilder().
+		RegisterTypeEncoder(reflect.TypeOf(submission.SubmissionModel{}), structcodec).
+		RegisterTypeDecoder(reflect.TypeOf(submission.SubmissionModel{}), structcodec).
+		Build()
+
+	client, err := mongo.NewClient(options.Client().ApplyURI(connectionURI).SetRegistry(reg))
 	if err != nil {
 		klog.Warningf("Failed to create client: %v", err)
 	}
@@ -98,14 +106,15 @@ func (ms MongoService) CreateSubmission(submission *submission.SubmissionModel) 
 }
 
 // GetSubmission f
-func (ms MongoService) GetSubmission(ID string) (*submission.SubmissionModel, error) {
+func (ms MongoService) GetSubmission(ID string) (sub *submission.SubmissionModel, err error) {
 	connection := ms.connect()
 	defer connection.Disconnect()
 
-	submission := new(submission.SubmissionModel)
+	sub = new(submission.SubmissionModel)
+
 	filter := bson.M{"_id": ID}
 
-	if err := ms.getCollection(connection).FindOne(connection.ctx, filter).Decode(submission); err != nil {
+	if err := ms.getCollection(connection).FindOne(connection.ctx, filter).Decode(sub); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
@@ -113,9 +122,9 @@ func (ms MongoService) GetSubmission(ID string) (*submission.SubmissionModel, er
 		return nil, err
 	}
 
-	klog.Infof("submission:[%+v]", submission)
+	klog.Infof("submission:[%+v]", sub)
 
-	return submission, nil
+	return sub, nil
 }
 
 // GetSubmissions f
