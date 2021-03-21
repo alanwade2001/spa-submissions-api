@@ -14,5 +14,6 @@ FROM alpine
 RUN apk update && apk add libxml2 libxslt-dev
 COPY --from=build /go/bin/spa-submissions-api /bin
 COPY app.env /
-COPY pain.001.001.03.xsd /
+RUN mkdir -p /schemas
+COPY schemas/pain.001.001.03.xsd /schemas/pain.001.001.03.xsd
 CMD ["spa-submissions-api"]
